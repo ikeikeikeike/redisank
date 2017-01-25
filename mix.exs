@@ -7,7 +7,7 @@ defmodule RedisRank.Mixfile do
 
   def project do
     [app: :redisank,
-     version: "0.1.1",
+     version: "0.1.2",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -35,7 +35,7 @@ defmodule RedisRank.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:rdtype, "~> 0.3"},
+      {:rdtype, "~> 0.4"},
       {:timex, "~> 3.1"},
       {:plug, "~> 1.1 or ~> 1.2 or ~> 1.3", optional: true},
 

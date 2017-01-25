@@ -121,23 +121,17 @@ defmodule Redisank do
     Base.zunionstore namekey(from, :yearly), dates, aggregate: "sum"
   end
 
-  def top(:all), do: top(:all, 0, 50)
-  def top(:all, from, to) do
+  def top(:all, from, to), do: top :all, from, to, []
+  def top(:all, from, to, opts) do
     %{
-      weekly: top(:weekly, from, to),
-      monthly: top(:monthly, from, to),
-      quarterly: top(:quarterly, from, to),
-      biannually: top(:biannually, from, to),
-      yearly: top(:yearly, from, to),
+      weekly: top(:weekly, from, to, opts),
+      monthly: top(:monthly, from, to, opts),
+      quarterly: top(:quarterly, from, to, opts),
+      biannually: top(:biannually, from, to, opts),
+      yearly: top(:yearly, from, to, opts),
     }
   end
-  def top(:weekly),      do: top "weekly"
-  def top(:monthly),     do: top "monthly"
-  def top(:quarterly),   do: top "quarterly"
-  def top(:biannually),  do: top "biannually"
-  def top(:yearly),      do: top "yearly"
-  def top(key),          do: top key, 0, 50
-  def top(key, from, to) do
+  def top(key, from, to, opts) do
     time = :calendar.local_time
     key =
       case :"#{key}" do
@@ -149,8 +143,11 @@ defmodule Redisank do
         _           -> key
       end
 
-    Base.zrevrangebyscore key, "+inf", "-inf", withscores: false, limit: [from, to]
+    score = Keyword.get opts, :withscores, false
+    Base.zrevrangebyscore key, "+inf", "-inf", withscores: score, limit: [from, to]
   end
+  def top(:all), do: top :all, 0, 50, []
+  def top(key),  do: top key, 0, 50, []
 
   def beginning_of_biannual({{year, month, _}, _}) do
     case month do
