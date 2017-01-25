@@ -46,19 +46,19 @@ defmodule Redisank do
   end
 
   def date(from, to, :daily) do
-    0..Timex.diff(from, to, :days)
+    0..abs(Timex.diff(from, to, :days))
     |> Enum.map(&Timex.shift from, days: &1)
     |> Enum.map(&Timex.format! &1, @format)
   end
 
   def date(from, to, :weekly) do
-    0..Timex.diff(from, to, :weeks)
+    0..abs(Timex.diff(from, to, :weeks))
     |> Enum.map(&Timex.shift Timex.beginning_of_week(from), weeks: &1)
     |> Enum.map(&namekey(&1, :weekly))
   end
 
   def date(from, to, :monthly) do
-    0..Timex.diff(from, to, :months)
+    0..abs(Timex.diff(from, to, :months))
     |> Enum.map(&Timex.shift Timex.beginning_of_month(from), months: &1)
     |> Enum.map(&namekey(&1, :monthly))
   end
